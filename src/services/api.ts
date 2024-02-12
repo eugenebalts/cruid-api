@@ -27,6 +27,7 @@ export default class Api {
     this.server.get('/users', (req, res) => this.getUsers(req, res));
     this.server.get('/users/:userId', (req, res) => this.getUserById(req, res));
     this.server.post('/users', (req, res) => this.createUser(req, res));
+    this.server.put('/users/:userId', (req, res) => this.updateUser(req, res));
   }
 
   private getUsers(req: Request, res: Response) {
@@ -63,12 +64,37 @@ export default class Api {
 
       const newUser = this.users.createUser(username, age, hobbies);
 
-      res.status(200).json(newUser);
+      return res.status(200).json(newUser);
     } catch (err) {
       const errorMsg =
         err instanceof Error ? err.message : 'Something went wrong';
 
       res.status(400).json({ message: errorMsg });
+    }
+  }
+
+  private updateUser(req: Request, res: Response) {
+    const userId = req.params.userId;
+
+    if (!isValidUUID(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const { username, age, hobbies } = req.body;
+
+    try {
+      const updatedUser = this.users.updateUser(userId, username, age, hobbies);
+
+      if (!updatedUser) {
+        throw new Error('User not found');
+      }
+
+      return res.status(200).json(updatedUser);
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : 'Something went wrong';
+
+      return res.status(404).json({ message: errorMsg });
     }
   }
 }

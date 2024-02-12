@@ -30,33 +30,27 @@ export default class Users {
     return newUser;
   }
 
-  updateUser(
+  public updateUser(
     userId: string,
-    username: string,
-    age: number,
-    hobbies: string[],
+    newName: string | undefined,
+    newAge: number | undefined,
+    newHobbies: string[] | undefined,
   ): User | undefined {
     const userIndex = this.users.findIndex((user) => user.id === userId);
+
     if (userIndex !== -1) {
+      const foundUser = this.users[userIndex];
+
       this.users[userIndex] = {
-        ...this.users[userIndex],
-        username,
-        age,
-        hobbies,
+        id: userId,
+        username: newName ?? foundUser.username,
+        age: newAge ?? foundUser.age,
+        hobbies: newHobbies ?? foundUser.hobbies,
       };
 
       return this.users[userIndex];
     }
 
     return undefined;
-  }
-
-  deleteUser(userId: string): boolean {
-    const userIndex = this.users.findIndex((user) => user.id === userId);
-    if (userIndex !== -1) {
-      this.users.splice(userIndex, 1);
-      return true;
-    }
-    return false;
   }
 }
