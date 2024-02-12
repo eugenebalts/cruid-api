@@ -2,8 +2,9 @@
   "name": "cruid-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "type": "commonjs",
   "scripts": {
+    "start": "nodemon ./dist/index.js",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "build": "tsc"
