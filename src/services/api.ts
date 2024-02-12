@@ -26,6 +26,7 @@ export default class Api {
 
     this.server.get('/users', (req, res) => this.getUsers(req, res));
     this.server.get('/users/:userId', (req, res) => this.getUserById(req, res));
+    this.server.post('/users', (req, res) => this.createUser(req, res));
   }
 
   private getUsers(req: Request, res: Response) {
@@ -48,6 +49,27 @@ export default class Api {
     }
 
     res.status(200).json(user);
+  }
+
+  private createUser(req: Request, res: Response) {
+    try {
+      const { username, age, hobbies } = req.body;
+
+      if (!(username && age && hobbies)) {
+        throw new Error(
+          'Body request does not contain required fields (username, age, hobbies)',
+        );
+      }
+
+      const newUser = this.users.createUser(username, age, hobbies);
+
+      res.status(200).json(newUser);
+    } catch (err) {
+      const errorMsg =
+        err instanceof Error ? err.message : 'Something went wrong';
+
+      res.status(400).json({ message: errorMsg });
+    }
   }
 }
 
