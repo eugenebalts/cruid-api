@@ -25,6 +25,7 @@ export default class Api {
     });
 
     this.server.get('/users', (req, res) => this.getUsers(req, res));
+    this.server.get('/users/:userId', (req, res) => this.getUserById(req, res));
   }
 
   private getUsers(req: Request, res: Response) {
@@ -32,4 +33,27 @@ export default class Api {
 
     res.status(200).json(allUsers);
   }
+
+  private getUserById(req: Request, res: Response) {
+    const userId = req.params.userId;
+
+    if (!isValidUUID(userId)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+
+    const user = this.users.getUserById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json(user);
+  }
+}
+
+function isValidUUID(uuid: string) {
+  const uuidRegex =
+    /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
+
+  return uuidRegex.test(uuid);
 }
