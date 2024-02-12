@@ -6,6 +6,7 @@ export default class Api {
   private server = express();
   private PORT = process.env.PORT || 4000;
   private users = new Users();
+  private SERVER_ERROR_MESSAGE = 'Internal Server Error';
 
   constructor() {
     this.server.use(bodyParser.json());
@@ -34,9 +35,13 @@ export default class Api {
   }
 
   private getUsers(req: Request, res: Response) {
-    const allUsers = this.users.getAllUsers();
+    try {
+      const allUsers = this.users.getAllUsers();
 
-    res.status(200).json(allUsers);
+      return res.status(200).json(allUsers);
+    } catch (err) {
+      return res.status(500).json({ message: this.SERVER_ERROR_MESSAGE });
+    }
   }
 
   private getUserById(req: Request, res: Response) {
@@ -46,13 +51,17 @@ export default class Api {
       return res.status(400).json({ message: 'Invalid user ID' });
     }
 
-    const user = this.users.getUserById(userId);
+    try {
+      const user = this.users.getUserById(userId);
 
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      if (!user) {
+        return res.status(404).json({ message: 'User not found' });
+      }
+
+      res.status(200).json(user);
+    } catch (_) {
+      return res.status(500).json({ message: this.SERVER_ERROR_MESSAGE });
     }
-
-    res.status(200).json(user);
   }
 
   private createUser(req: Request, res: Response) {
@@ -60,19 +69,17 @@ export default class Api {
       const { username, age, hobbies } = req.body;
 
       if (!(username && age && hobbies)) {
-        throw new Error(
-          'Body request does not contain required fields (username, age, hobbies)',
-        );
+        return res.status(400).json({
+          message:
+            'Body request does not contain required fields (username, age, hobbies)',
+        });
       }
 
       const newUser = this.users.createUser(username, age, hobbies);
 
       return res.status(200).json(newUser);
-    } catch (err) {
-      const errorMsg =
-        err instanceof Error ? err.message : 'Something went wrong';
-
-      res.status(400).json({ message: errorMsg });
+    } catch (_) {
+      return res.status(500).json({ message: this.SERVER_ERROR_MESSAGE });
     }
   }
 
@@ -89,15 +96,12 @@ export default class Api {
       const updatedUser = this.users.updateUser(userId, username, age, hobbies);
 
       if (!updatedUser) {
-        throw new Error('User not found');
+        return res.status(404).json({ message: 'User not found' });
       }
 
       return res.status(200).json(updatedUser);
-    } catch (err) {
-      const errorMsg =
-        err instanceof Error ? err.message : 'Something went wrong';
-
-      return res.status(404).json({ message: errorMsg });
+    } catch (_) {
+      return res.status(500).json({ message: this.SERVER_ERROR_MESSAGE });
     }
   }
 
@@ -112,15 +116,15 @@ export default class Api {
       const isUserDelete = this.users.deleteUser(userId);
 
       if (!isUserDelete) {
-        throw new Error('User not found');
+        return res.status(404).json({ message: 'User not found' });
       }
 
-      return res.status(200).send();
-    } catch (err) {
-      const errorMsg =
-        err instanceof Error ? err.message : 'Something went wrong';
-
-      return res.status(404).json({ message: errorMsg });
+      return res
+        .status(200)
+        .json({ message: `User with id ${userId} has deleted` })
+        .send();
+    } catch (_) {
+      return res.status(500).json({ message: this.SERVER_ERROR_MESSAGE });
     }
   }
 }
