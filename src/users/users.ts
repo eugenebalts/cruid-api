@@ -53,4 +53,16 @@ export default class Users {
 
     return undefined;
   }
+
+  public deleteUser(userId: string): boolean {
+    const userIndex = this.users.findIndex((user) => user.id === userId);
+
+    if (userIndex !== -1) {
+      this.users.splice(userIndex, 1);
+
+      return true;
+    }
+
+    return false;
+  }
 }
