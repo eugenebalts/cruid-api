@@ -18,6 +18,11 @@ Your task is to implement a simple CRUD API using an in-memory database.
 
 - **Clone develop branch**: `git clone https://github.com/eugenebalts/cruid-api.git`
 - **Go to the cruid folder**: `cd cruid-api`
+- **Checkout to develop branch**: `git checkout develop`
+
+## Installing dependencies
+
+- **Installing dependencies**: `npm install`
 
 ## Running
 
