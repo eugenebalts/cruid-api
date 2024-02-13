@@ -3,7 +3,7 @@ import bodyParser from 'body-parser';
 import Users from '../users/users';
 
 export default class Api {
-  private server = express();
+  public server = express();
   private PORT = process.env.PORT || 4000;
   private users = new Users();
   private SERVER_ERROR_MESSAGE = 'Internal Server Error';
