@@ -14,6 +14,11 @@ Your task is to implement a simple CRUD API using an in-memory database.
   - `PUT /users/:userId`: Update an existing user
   - `DELETE /users/:userId`: Delete a user
 
+## Clone repository
+
+- **Clone develop branch**: `git clone https://github.com/eugenebalts/cruid-api.git`
+- **Go to the cruid folder**: `cd cruid-api`
+
 ## Running
 
 - **Development Mode**: `npm run start:dev`
